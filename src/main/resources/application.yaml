@@ -1,3 +1,10 @@
 spring:
   application:
     name: pokerixe-backend
+  data:
+    mongodb:
+      uri: mongodb://localhost/db
+      # Auth
+      #username: root
+      #password: root
+      #authentication-database: admin
