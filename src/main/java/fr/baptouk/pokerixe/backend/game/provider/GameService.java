@@ -83,4 +83,11 @@ public final class GameService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    public Iterable<Game> getHistory(UUID userId) {
+        return this.gameRepository.findAll()
+                .stream()
+                .filter(game -> game.getPlayers().stream()
+                        .anyMatch(player -> player.getId().equals(userId)))
+                .toList();
+    }
 }
