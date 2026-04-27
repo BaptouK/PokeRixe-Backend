@@ -1,20 +1,15 @@
-package fr.baptouk.pokerixe.backend.team.pokemon;
+package fr.baptouk.pokerixe.backend.user.team.pokemon;
 
-import fr.baptouk.pokerixe.backend.team.pokemon.attacks.Attack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
 @Document
 @AllArgsConstructor
 @Data
-public class Pokemon {
+public final class Attack {
 
     private int id;
     private String apiUrl;
-
-    private List<Attack> attacks;
 
 }

@@ -1,15 +1,10 @@
 package fr.baptouk.pokerixe.backend.game.turn.action;
 
-import org.springframework.data.annotation.Id;
+import lombok.RequiredArgsConstructor;
 
-import java.util.UUID;
-
+@RequiredArgsConstructor
 public abstract class Action {
 
     private final String name;
-
-    public Action(String name) {
-        this.name = name;
-    }
 
 }
