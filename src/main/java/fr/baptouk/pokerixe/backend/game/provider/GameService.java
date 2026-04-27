@@ -1,0 +1,86 @@
+package fr.baptouk.pokerixe.backend.game.provider;
+
+import fr.baptouk.pokerixe.backend.game.Game;
+import fr.baptouk.pokerixe.backend.game.play.GamePlay;
+import fr.baptouk.pokerixe.backend.game.play.GameStatus;
+import fr.baptouk.pokerixe.backend.game.provider.exceptions.GameNotFoundException;
+import fr.baptouk.pokerixe.backend.game.provider.exceptions.UserAlreadyInGameException;
+import fr.baptouk.pokerixe.backend.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Component
+public final class GameService {
+
+    @Autowired
+    private GameRepository gameRepository;
+
+    /**
+     * Liste des parties en cours, qu'elles soient vides ou non.
+     */
+    private final List<GamePlay> games = new ArrayList<>();
+
+    public Iterable<Game> getGames() {
+        return gameRepository.findAll();
+    }
+
+    public Game getGame(final UUID gameId) throws GameNotFoundException {
+        return gameRepository.findById(gameId)
+                .orElseThrow(GameNotFoundException::new);
+    }
+
+    /**
+     * Créer une partie, la partie est créée avec le joueur qui la crée en local et n'apparaît pas encore dans la base de données
+     * Le joueur peut alors le voir dans la liste des parties à rejoindre.
+     *
+     * @param user {@link User} qui crée la partie
+     * @return Un token websocket qui appartient à la partie
+     */
+    public String createGame(final User user, final String description) throws UserAlreadyInGameException {
+        if (this.games.stream()
+                .anyMatch(gamePlay -> gamePlay.getPlayers().stream()
+                        .anyMatch(player -> player.getId().equals(user.getId())))) {
+            throw new UserAlreadyInGameException();
+        }
+
+        final GamePlay game = new GamePlay(description);
+
+        game.addPlayer(user);
+
+        this.games.add(game);
+        return game.getUserToken(user.getId());
+    }
+
+    public String joinGame(final User user, final UUID gameId) throws GameNotFoundException {
+        final GamePlay gamePlay = this.games.stream()
+
+                // Is game available ?
+                .filter(games -> games.getId().equals(gameId))
+                .filter(games -> games.getStatus() == GameStatus.WAITING)
+                .filter(games -> games.getPlayers().size() < 2)
+
+                .findFirst()
+                .orElseThrow(GameNotFoundException::new);
+
+        gamePlay.addPlayer(user);
+
+
+        /*
+         * Le lancement de la partie se fait uniquement quand les deux joueurs sont connectés au websocket.
+         */
+        return gamePlay.getUserToken(user.getId());
+    }
+
+    public List<Game> getAvailableGames(){
+        return this.games.stream()
+                .filter(gamePlay -> gamePlay.getStatus() == GameStatus.WAITING
+                        && gamePlay.getPlayers().size() < 2)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+}
