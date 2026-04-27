@@ -7,12 +7,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 import java.util.UUID;
 
-@Document(collection = "users")
-
+@Document(collection = "history")
 public class History {
 
-    @Id
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     private List<Game> games;
 

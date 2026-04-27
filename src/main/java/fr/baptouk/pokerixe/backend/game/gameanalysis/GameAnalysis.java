@@ -7,8 +7,7 @@ import java.util.UUID;
 
 public class GameAnalysis {
 
-    @Id
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     private int score;
 

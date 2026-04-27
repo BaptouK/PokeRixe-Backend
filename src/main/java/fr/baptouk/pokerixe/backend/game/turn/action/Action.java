@@ -6,9 +6,10 @@ import java.util.UUID;
 
 public abstract class Action {
 
-    @Id
-    private UUID id;
+    private final String name;
 
-    private String name;
+    public Action(String name) {
+        this.name = name;
+    }
 
 }
