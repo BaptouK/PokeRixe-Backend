@@ -2,20 +2,28 @@ package fr.baptouk.pokerixe.backend.user;
 
 import fr.baptouk.pokerixe.backend.history.History;
 import fr.baptouk.pokerixe.backend.team.Team;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.UUID;
 
 @Document(collection = "users")
+@Data
 public class User {
 
     @Id
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     private String mail, password, pseudo;
 
     private History history;
 
     private Team team;
+
+    public User(String mail, String password, String pseudo) {
+        this.mail = mail;
+        this.password = password;
+        this.pseudo = pseudo;
+    }
 }
