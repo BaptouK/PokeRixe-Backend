@@ -9,7 +9,6 @@ import java.util.UUID;
 @Data
 public final class Team {
 
-    private UUID id = UUID.randomUUID();
     private List<Pokemon> pokemons;
 
 }
