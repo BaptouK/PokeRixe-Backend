@@ -31,6 +31,11 @@ public final class UserService {
         return userRepository.save(user);
     }
 
+    public User getByMail(String mail) throws UserNotFoundException {
+        return userRepository.findByMail(mail)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
     public User editProfile(final User user, String pseudo, String mail){
         user.setPseudo(pseudo.length() > 32 ? pseudo.substring(0, 32) : pseudo);
         user.setMail(mail);

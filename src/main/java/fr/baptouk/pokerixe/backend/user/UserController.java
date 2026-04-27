@@ -1,10 +1,15 @@
 package fr.baptouk.pokerixe.backend.user;
 
+import fr.baptouk.pokerixe.backend.shared.ApiResponse;
+import fr.baptouk.pokerixe.backend.user.dto.UserResponseDTO;
+import fr.baptouk.pokerixe.backend.user.dto.UserResponseUpdateDTO;
 import fr.baptouk.pokerixe.backend.user.provider.UserNotFoundException;
 import fr.baptouk.pokerixe.backend.user.provider.UserService;
 import fr.baptouk.pokerixe.backend.user.team.Team;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -21,6 +26,15 @@ public final class UserController {
         return ResponseEntity.ok(userService.getUsers());
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<UserResponseDTO>> getMe(@AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            return ResponseEntity.ok(new ApiResponse<>(new UserResponseDTO(userService.getByMail(userDetails.getUsername()))));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("{uuid}")
     public @ResponseBody ResponseEntity<User> getUser(@PathVariable final UUID uuid) {
         try {
@@ -34,7 +48,6 @@ public final class UserController {
     public @ResponseBody ResponseEntity<User> editTeam(@RequestBody final Team team) {
         final User user = null; // TODO : Get user by token
 
-
         try {
             return ResponseEntity.ok(userService.editTeam(user, team));
         } catch (IllegalArgumentException e) {
@@ -43,10 +56,16 @@ public final class UserController {
     }
 
     @PatchMapping("profile")
-    public @ResponseBody ResponseEntity<User> editProfile(@RequestBody final String pseudo, final String mail) {
-        final User user = null; // TODO : Get user by token
+    public @ResponseBody ResponseEntity<User> editProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody final UserResponseUpdateDTO newUser) {
+        final User user = userService.getByMail(userDetails.getUsername())  ; // Le username c'est le Mail, car c'est l'identifiant du compte pour le jwt token
 
-        return ResponseEntity.ok(userService.editProfile(user, pseudo, mail));
+
+
+        System.out.println("New user :::");
+        System.out.println(newUser.getPseudo());
+        System.out.println(newUser.getMail());
+
+        return ResponseEntity.ok(userService.editProfile(user, newUser.getPseudo(), newUser.getMail()));
     }
 
 }
