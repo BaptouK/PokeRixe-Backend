@@ -18,7 +18,7 @@ import org.springframework.data.mongodb.core.mapping.*;
 @Configuration
 public class MongoConfiguration {
 
-    @Value("${MONGO_URI}")
+    @Value("${MONGO_URI:mongodb://localhost:27017/pokerixe}")
     private String mongoUri;
 
     @Bean
