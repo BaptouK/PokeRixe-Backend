@@ -3,8 +3,8 @@ package fr.baptouk.pokerixe.backend.user.provider;
 import fr.baptouk.pokerixe.backend.user.User;
 import fr.baptouk.pokerixe.backend.user.team.Team;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
 import java.util.UUID;
 
 @Component
@@ -22,13 +22,8 @@ public final class UserService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    public User editTeam(final User user, final Team team) throws IllegalArgumentException {
-        if (team.getPokemons().size() > 6){
-            throw new IllegalArgumentException("A team cannot have more than 6 pokemons");
-        }
-
-        user.setTeam(team);
-        return userRepository.save(user);
+    public User getUserByToken(UserDetails userDetails) {
+        return getByMail(userDetails.getUsername());
     }
 
     public User getByMail(String mail) throws UserNotFoundException {
@@ -36,10 +31,17 @@ public final class UserService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    public User editProfile(final User user, String pseudo, String mail){
+    public User editTeam(final User user, final Team team) throws IllegalArgumentException {
+        if (team.getPokemons().size() > 6) {
+            throw new IllegalArgumentException("A team cannot have more than 6 pokemons");
+        }
+        user.setTeam(team);
+        return userRepository.save(user);
+    }
+
+    public User editProfile(final User user, String pseudo, String mail) {
         user.setPseudo(pseudo.length() > 32 ? pseudo.substring(0, 32) : pseudo);
         user.setMail(mail);
         return userRepository.save(user); // TODO : ca duplique avec les mauvaises datas
     }
-
 }

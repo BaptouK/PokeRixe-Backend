@@ -1,7 +1,5 @@
 package fr.baptouk.pokerixe.backend.auth;
 
-import fr.baptouk.pokerixe.backend.auth.dto.SignInRequest;
-import fr.baptouk.pokerixe.backend.auth.dto.SignUpRequest;
 import fr.baptouk.pokerixe.backend.user.User;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +14,14 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signin")
-    public ResponseEntity<User> signIn(@RequestBody SignInRequest request,
+    public ResponseEntity<User> signIn(@RequestParam String password, @RequestParam String mail,
                                        HttpServletResponse response) {
-        return ResponseEntity.ok(authService.signIn(request, response));
+        return ResponseEntity.ok(authService.signIn(password,mail,response));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signUp(@RequestBody SignUpRequest request) {
-        return ResponseEntity.ok(authService.signUp(request));
+    public ResponseEntity<User> signUp(@RequestParam String pseudo, @RequestParam String password, @RequestParam String mail) {
+        return ResponseEntity.ok(authService.signUp(pseudo,password,mail));
     }
 
     @PostMapping("/signout")

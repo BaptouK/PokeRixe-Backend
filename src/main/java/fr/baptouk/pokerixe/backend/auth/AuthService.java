@@ -54,7 +54,7 @@ public class AuthService {
     public void signOut(HttpServletResponse response) {
         Cookie cookie = new Cookie("jwt", "");
         cookie.setHttpOnly(true);
-        cookie.setSecure(false); // TODO : true en prod
+        cookie.setSecure(false); // true en prod
         cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
