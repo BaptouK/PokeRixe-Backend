@@ -1,0 +1,27 @@
+name: Deploy Pokerixe Back
+
+on:
+  workflow_run:
+    workflows: ["Build & Push to GHCR"]
+    branches: [main]
+    types: [completed]
+
+jobs:
+  deploy:
+    name: Deploy sur le serveur labo
+    runs-on: ubuntu-latest
+    # Bloque le job si la CI a échoué
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Déployer sur le serveur labo
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key
+          chmod 600 private_key
+          ssh -i private_key -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+              docker pull ghcr.io/baptouk/pokerixe-backend:latest &&
+              cd ~/PROJET/ &&
+              docker compose up -d --no-deps --force-recreate backend
+            "
+          rm private_key
