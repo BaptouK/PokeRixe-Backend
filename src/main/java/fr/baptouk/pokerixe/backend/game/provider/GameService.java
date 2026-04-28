@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -81,6 +82,12 @@ public final class GameService {
                 .filter(gamePlay -> gamePlay.getStatus() == GameStatus.WAITING
                         && gamePlay.getPlayers().size() < 2)
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    public Optional<GamePlay> getGameByToken(final String token){
+        return this.games.stream()
+                .filter(gamePlay -> gamePlay.getUserByToken(token) != null)
+                .findFirst();
     }
 
     public Iterable<Game> getHistory(UUID userId) {

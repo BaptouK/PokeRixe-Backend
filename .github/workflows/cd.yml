@@ -5,13 +5,13 @@ on:
     workflows: ["Build & Push to GHCR"]
     branches: [main]
     types: [completed]
-  workflow_dispatch:
 
 jobs:
   deploy:
     name: Deploy sur le serveur labo
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    # Bloque le job si la CI a échoué
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Déployer sur le serveur labo
