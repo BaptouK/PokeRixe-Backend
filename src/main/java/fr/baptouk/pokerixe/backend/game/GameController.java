@@ -43,7 +43,7 @@ public final class GameController {
     }
 
     @PostMapping
-    public @ResponseBody ResponseEntity<String> createGame(@AuthenticationPrincipal UserDetails userDetails, @RequestBody String description) {
+    public @ResponseBody ResponseEntity<String> createGame(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String description) {
         final User user = this.userService.getUserByToken(userDetails);
 
         try {
