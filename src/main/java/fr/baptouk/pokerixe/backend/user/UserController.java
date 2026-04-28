@@ -53,12 +53,10 @@ public final class UserController {
     }
 
     @PatchMapping("profile")
-    public @ResponseBody ResponseEntity<User> editProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody final String pseudo, @RequestBody final String mail) {
-
-        System.out.println(pseudo);
-        System.out.println(mail);
-
-        final User user = userService.getByMail(userDetails.getUsername())  ; // Le username c'est le Mail, car c'est l'identifiant du compte pour le jwt token
+    public @ResponseBody ResponseEntity<User> editProfile(@AuthenticationPrincipal UserDetails userDetails,
+                                                          @RequestParam final String pseudo,
+                                                          @RequestParam final String mail) {
+        final User user = userService.getByMail(userDetails.getUsername()); // Le username c'est le Mail, car c'est l'identifiant du compte pour le jwt token
 
         return ResponseEntity.ok(userService.editProfile(user, pseudo, mail));
     }
