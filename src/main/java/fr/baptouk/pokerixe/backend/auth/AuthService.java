@@ -48,14 +48,13 @@ public class AuthService {
         cookie.setMaxAge(24 * 60 * 60);
         response.addCookie(cookie);
 
-        User user = userRepository.findByMail(request.getMail()).orElseThrow();
-        return user;
+        return userRepository.findByMail(request.getMail()).orElseThrow();
     }
 
     public void signOut(HttpServletResponse response) {
         Cookie cookie = new Cookie("jwt", "");
         cookie.setHttpOnly(true);
-        cookie.setSecure(false); // true en prod
+        cookie.setSecure(false); // TODO : true en prod
         cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
