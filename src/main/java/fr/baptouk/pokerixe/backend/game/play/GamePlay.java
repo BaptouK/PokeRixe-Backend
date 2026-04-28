@@ -21,10 +21,13 @@ public class GamePlay extends Game {
     @Getter
     private GameStatus status = GameStatus.WAITING;
 
+    private final int pokemonCount;
+
     private final Map<String, UUID> playerTokens = new HashMap<>(2);
 
-    public GamePlay(final String description) {
+    public GamePlay(final String description, final int pokemonCount) {
         super(description);
+        this.pokemonCount = pokemonCount;
     }
 
     @Override

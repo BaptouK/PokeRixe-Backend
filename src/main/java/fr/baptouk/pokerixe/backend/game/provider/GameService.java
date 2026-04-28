@@ -1,6 +1,7 @@
 package fr.baptouk.pokerixe.backend.game.provider;
 
 import fr.baptouk.pokerixe.backend.game.Game;
+import fr.baptouk.pokerixe.backend.game.play.GameCreationResponse;
 import fr.baptouk.pokerixe.backend.game.play.GamePlay;
 import fr.baptouk.pokerixe.backend.game.play.GameStatus;
 import fr.baptouk.pokerixe.backend.game.provider.exceptions.GameNotFoundException;
@@ -42,19 +43,21 @@ public final class GameService {
      * @param user {@link User} qui crée la partie
      * @return Un token websocket qui appartient à la partie
      */
-    public String createGame(final User user, final String description) throws UserAlreadyInGameException {
+    public GameCreationResponse createGame(final User user, final String description) throws UserAlreadyInGameException {
         if (this.games.stream()
                 .anyMatch(gamePlay -> gamePlay.getPlayers().stream()
                         .anyMatch(player -> player.getId().equals(user.getId())))) {
             throw new UserAlreadyInGameException();
         }
 
-        final GamePlay game = new GamePlay(description);
+        final int pokemonCount = user.getTeam().getPokemons().size();
+
+        final GamePlay game = new GamePlay(description, pokemonCount);
 
         game.addPlayer(user);
 
         this.games.add(game);
-        return game.getUserToken(user.getId());
+        return new GameCreationResponse(game.getId(), game.getUserToken(user.getId()));
     }
 
     public String joinGame(final User user, final UUID gameId) throws GameNotFoundException {

@@ -1,5 +1,6 @@
 package fr.baptouk.pokerixe.backend.game;
 
+import fr.baptouk.pokerixe.backend.game.play.GameCreationResponse;
 import fr.baptouk.pokerixe.backend.game.provider.exceptions.GameNotFoundException;
 import fr.baptouk.pokerixe.backend.game.provider.GameService;
 import fr.baptouk.pokerixe.backend.game.provider.exceptions.UserAlreadyInGameException;
@@ -43,7 +44,7 @@ public final class GameController {
     }
 
     @PostMapping
-    public @ResponseBody ResponseEntity<String> createGame(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String description) {
+    public @ResponseBody ResponseEntity<GameCreationResponse> createGame(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String description) {
         final User user = this.userService.getUserByToken(userDetails);
 
         try {
