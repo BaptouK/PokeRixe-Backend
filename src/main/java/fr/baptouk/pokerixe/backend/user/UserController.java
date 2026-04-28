@@ -42,8 +42,9 @@ public final class UserController {
     }
 
     @PatchMapping("team")
-    public @ResponseBody ResponseEntity<User> editTeam(@RequestBody final Team team) {
-        final User user = null; // TODO : Get user by token
+    public @ResponseBody ResponseEntity<User> editTeam(@AuthenticationPrincipal UserDetails userDetails,@RequestBody final Team team) {
+
+        final User user = userService.getUserByToken(userDetails);
 
         try {
             return ResponseEntity.ok(userService.editTeam(user, team));
@@ -56,7 +57,8 @@ public final class UserController {
     public @ResponseBody ResponseEntity<User> editProfile(@AuthenticationPrincipal UserDetails userDetails,
                                                           @RequestParam final String pseudo,
                                                           @RequestParam final String mail) {
-        final User user = userService.getByMail(userDetails.getUsername()); // Le username c'est le Mail, car c'est l'identifiant du compte pour le jwt token
+
+        final User user = userService.getUserByToken(userDetails); // Le username c'est le Mail, car c'est l'identifiant du compte pour le jwt token
 
         return ResponseEntity.ok(userService.editProfile(user, pseudo, mail));
     }

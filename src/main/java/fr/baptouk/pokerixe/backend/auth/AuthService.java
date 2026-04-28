@@ -1,7 +1,5 @@
 package fr.baptouk.pokerixe.backend.auth;
 
-import fr.baptouk.pokerixe.backend.auth.dto.SignInRequest;
-import fr.baptouk.pokerixe.backend.auth.dto.SignUpRequest;
 import fr.baptouk.pokerixe.backend.auth.jwt.JwtService;
 import fr.baptouk.pokerixe.backend.user.User;
 import fr.baptouk.pokerixe.backend.user.provider.UserRepository;
@@ -25,20 +23,20 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-    public User signUp(SignUpRequest request) {
-        if (userRepository.findByMail(request.getMail()).isPresent()) {
+    public User signUp(String pseudo, String password, String mail) {
+        if (userRepository.findByMail(mail).isPresent()) {
             throw new IllegalArgumentException("Mail already in use");
         }
-        User user = new User(request.getMail(), passwordEncoder.encode(request.getPassword()), request.getPseudo());
+        User user = new User(mail, passwordEncoder.encode(password), pseudo);
         return userRepository.save(user);
     }
 
-    public User signIn(SignInRequest request, HttpServletResponse response) {
+    public User signIn(String password, String mail, HttpServletResponse response) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getMail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(mail, password)
         );
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getMail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(mail);
         String jwt = jwtService.generateToken(userDetails);
 
         Cookie cookie = new Cookie("jwt", jwt);
@@ -48,7 +46,7 @@ public class AuthService {
         cookie.setMaxAge(24 * 60 * 60);
         response.addCookie(cookie);
 
-        return userRepository.findByMail(request.getMail()).orElseThrow();
+        return userRepository.findByMail(mail).orElseThrow();
     }
 
     public void signOut(HttpServletResponse response) {
