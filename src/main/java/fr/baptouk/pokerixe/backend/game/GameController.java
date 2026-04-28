@@ -4,8 +4,11 @@ import fr.baptouk.pokerixe.backend.game.provider.exceptions.GameNotFoundExceptio
 import fr.baptouk.pokerixe.backend.game.provider.GameService;
 import fr.baptouk.pokerixe.backend.game.provider.exceptions.UserAlreadyInGameException;
 import fr.baptouk.pokerixe.backend.user.User;
+import fr.baptouk.pokerixe.backend.user.provider.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -16,6 +19,9 @@ public final class GameController {
 
     @Autowired
     private GameService gameService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public @ResponseBody ResponseEntity<Iterable<Game>> getGames() {
@@ -32,13 +38,13 @@ public final class GameController {
     }
 
     @GetMapping("available")
-    public @ResponseBody ResponseEntity<Iterable<Game>> getAvailableGames(){
+    public @ResponseBody ResponseEntity<Iterable<Game>> getAvailableGames() {
         return ResponseEntity.ok(gameService.getAvailableGames());
     }
 
     @PostMapping
-    public @ResponseBody ResponseEntity<String> createGame(@RequestBody String description){
-        final User user = null; // TODO : Get user by token
+    public @ResponseBody ResponseEntity<String> createGame(@AuthenticationPrincipal UserDetails userDetails, @RequestBody String description) {
+        final User user = this.userService.getUserByToken(userDetails);
 
         try {
             return ResponseEntity.ok(gameService.createGame(user, description));
@@ -48,8 +54,8 @@ public final class GameController {
     }
 
     @PostMapping("{gameId}/join")
-    public @ResponseBody ResponseEntity<String> joinGame(@RequestBody UUID gameId) {
-        final User user = null; // TODO : Get user by token
+    public @ResponseBody ResponseEntity<String> joinGame(@AuthenticationPrincipal UserDetails userDetails, @RequestBody UUID gameId) {
+        final User user = this.userService.getUserByToken(userDetails);
 
         try {
             return ResponseEntity.ok(gameService.joinGame(user, gameId));

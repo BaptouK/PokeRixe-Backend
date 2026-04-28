@@ -1,3 +1,7 @@
 spring:
   application:
     name: pokerixe-backend
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
