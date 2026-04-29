@@ -23,7 +23,7 @@ public final class UserService {
     }
 
     public User getUserByToken(UserDetails userDetails) {
-        return getByMail(userDetails.getUsername());
+        return getByMail(userDetails.getUsername()); // Le username c'est le Mail, car c'est l'identifiant du compte pour le jwt token
     }
 
     public User getByMail(String mail) throws UserNotFoundException {
