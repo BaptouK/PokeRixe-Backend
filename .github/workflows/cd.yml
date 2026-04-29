@@ -1,5 +1,6 @@
 name: Deploy Pokerixe Back
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["Build & Push to GHCR"]
     branches: [main]
