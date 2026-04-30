@@ -5,7 +5,10 @@ import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketFactory;
 import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 
@@ -33,7 +36,7 @@ public final class PacketWebsocketHandler extends BinaryWebSocketHandler {
         } catch (UserNotAuthorizedException e) {
             logger.warn("Unauthorized user attempted to send a packet", e);
             try {
-                session.close();
+                session.close(CloseStatus.NORMAL.withReason("Unauthorized"));
             } catch (Exception closeException) {
                 logger.error("Failed to close unauthorized session", closeException);
             }

@@ -1,6 +1,7 @@
 package fr.baptouk.pokerixe.backend.game;
 
 import fr.baptouk.pokerixe.backend.game.play.GameCreationResponse;
+import fr.baptouk.pokerixe.backend.game.play.GamePlay;
 import fr.baptouk.pokerixe.backend.game.provider.exceptions.GameNotFoundException;
 import fr.baptouk.pokerixe.backend.game.provider.GameService;
 import fr.baptouk.pokerixe.backend.game.provider.exceptions.UserAlreadyInGameException;
@@ -44,7 +45,7 @@ public final class GameController {
     }
 
     @GetMapping("/available")
-    public @ResponseBody ResponseEntity<Iterable<Game>> getAvailableGames() {
+    public @ResponseBody ResponseEntity<Iterable<GamePlay>> getAvailableGames() {
         return ResponseEntity.ok(gameService.getAvailableGames());
     }
 
@@ -61,11 +62,11 @@ public final class GameController {
     }
 
     @PostMapping("{gameId}/join")
-    public @ResponseBody ResponseEntity<String> joinGame(@AuthenticationPrincipal UserDetails userDetails, @RequestBody UUID gameId) {
+    public @ResponseBody ResponseEntity<String> joinGame(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID gameId, @RequestParam int selectSlotPokemon) {
         final User user = this.userService.getUserByToken(userDetails);
 
         try {
-            return ResponseEntity.ok(gameService.joinGame(user, gameId));
+            return ResponseEntity.ok(gameService.joinGame(user, gameId, selectSlotPokemon));
         } catch (GameNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

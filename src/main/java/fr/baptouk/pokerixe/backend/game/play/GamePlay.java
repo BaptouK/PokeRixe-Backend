@@ -1,7 +1,9 @@
 package fr.baptouk.pokerixe.backend.game.play;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import fr.baptouk.pokerixe.backend.game.Game;
 import fr.baptouk.pokerixe.backend.user.User;
+import fr.baptouk.pokerixe.backend.user.team.pokemon.Pokemon;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +15,7 @@ import java.util.UUID;
 /**
  * Objet de la partie en cours
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class GamePlay extends Game {
 
     private static final SecureRandom RANDOM = new SecureRandom();
@@ -23,7 +26,7 @@ public class GamePlay extends Game {
 
     private final int pokemonCount;
 
-    private final Map<String, UUID> playerTokens = new HashMap<>(2);
+    private transient final Map<String, UUID> playerTokens = new HashMap<>(2);
 
     public GamePlay(final String description, final int pokemonCount) {
         super(description);
@@ -36,6 +39,14 @@ public class GamePlay extends Game {
         this.playerTokens.put(token, user.getId());
 
         return super.addPlayer(user);
+    }
+
+    @Override
+    public Game addPlayer(User user, Pokemon selectedPokemon) {
+        final String token = this.generateToken();
+        this.playerTokens.put(token, user.getId());
+
+        return super.addPlayer(user, selectedPokemon);
     }
 
     private synchronized String generateToken() {
@@ -54,5 +65,11 @@ public class GamePlay extends Game {
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void start() {
+        this.status = GameStatus.PLAYING;
+
+        // TODO
     }
 }

@@ -16,7 +16,7 @@ public record JoinPacket(UUID userId) implements PacketData {
 
     @Override
     public void handleRecieve(WebSocketSession session, UUID user, GamePlay game) {
-        if (game.getStatus() == GameStatus.WAITING && game.getPlayers().size() < 2) {
+        if (game.getStatus() == GameStatus.WAITING) {
             try {
                 PacketFactory.broadcastPacket(this);
             } catch (Exception e) {
@@ -24,7 +24,10 @@ public record JoinPacket(UUID userId) implements PacketData {
             }
 
             logger.info("User {} joined the game {}", userId, game.getId());
-            // TODO : Start
+            if (game.getPlayers().size() == 2) {
+                logger.info("Game {} is now full and will start", game.getId());
+                game.start();
+            }
         } else {
             logger.warn("User {} attempted to join a game that is not waiting or already has 2 players", userId);
         }
