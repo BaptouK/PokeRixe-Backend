@@ -5,6 +5,7 @@ import fr.baptouk.pokerixe.backend.game.play.GamePlay;
 import fr.baptouk.pokerixe.backend.game.provider.exceptions.GameNotFoundException;
 import fr.baptouk.pokerixe.backend.game.provider.GameService;
 import fr.baptouk.pokerixe.backend.game.provider.exceptions.UserAlreadyInGameException;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.game.JoinPacket;
 import fr.baptouk.pokerixe.backend.user.User;
 import fr.baptouk.pokerixe.backend.user.provider.UserService;
 import org.slf4j.Logger;

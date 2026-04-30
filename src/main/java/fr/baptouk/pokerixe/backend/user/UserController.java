@@ -29,6 +29,15 @@ public final class UserController {
         }
     }
 
+    @GetMapping("{uuid}")
+    public @ResponseBody ResponseEntity<UserResponseDTO> getUser(@PathVariable final UUID uuid) {
+        try {
+            return ResponseEntity.ok(new UserResponseDTO(userService.getUser(uuid)));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PatchMapping("team")
     public @ResponseBody ResponseEntity<UserResponseDTO> editTeam(@AuthenticationPrincipal UserDetails userDetails,@RequestBody final Team team) {
 
