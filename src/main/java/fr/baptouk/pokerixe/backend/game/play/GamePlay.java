@@ -2,6 +2,7 @@ package fr.baptouk.pokerixe.backend.game.play;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import fr.baptouk.pokerixe.backend.game.Game;
+import fr.baptouk.pokerixe.backend.game.play.lifecycle.GameLifecycle;
 import fr.baptouk.pokerixe.backend.user.User;
 import fr.baptouk.pokerixe.backend.user.team.pokemon.Pokemon;
 import lombok.Getter;
@@ -27,6 +28,8 @@ public class GamePlay extends Game {
     private final int pokemonCount;
 
     private transient final Map<String, UUID> playerTokens = new HashMap<>(2);
+
+    private transient final GameLifecycle lifecycle = new GameLifecycle(this);
 
     public GamePlay(final String description, final int pokemonCount) {
         super(description);
@@ -67,9 +70,13 @@ public class GamePlay extends Game {
                 .orElse(null);
     }
 
+    public void init() {
+        this.lifecycle.fetchPokemons();
+    }
+
     public void start() {
         this.status = GameStatus.PLAYING;
 
-        // TODO
+        this.lifecycle.startGame();
     }
 }

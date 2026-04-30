@@ -26,7 +26,7 @@ public record JoinPacket(UUID userId) implements PacketData {
             logger.info("User {} joined the game {}", userId, game.getId());
             if (game.getPlayers().size() == 2) {
                 logger.info("Game {} is now full and will start", game.getId());
-                game.start();
+                game.init();
             }
         } else {
             logger.warn("User {} attempted to join a game that is not waiting or already has 2 players", userId);
