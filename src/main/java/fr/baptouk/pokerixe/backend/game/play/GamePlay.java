@@ -3,9 +3,13 @@ package fr.baptouk.pokerixe.backend.game.play;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import fr.baptouk.pokerixe.backend.game.Game;
 import fr.baptouk.pokerixe.backend.game.play.lifecycle.GameLifecycle;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketFactory;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.game.lifecycle.GameStartPacket;
 import fr.baptouk.pokerixe.backend.user.User;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.SecureRandom;
 import java.util.HashMap;
@@ -19,6 +23,7 @@ import java.util.UUID;
 public class GamePlay extends Game {
 
     private static final SecureRandom RANDOM = new SecureRandom();
+    private final Logger logger = LoggerFactory.getLogger(GamePlay.class);
 
     @Setter
     @Getter
@@ -27,6 +32,7 @@ public class GamePlay extends Game {
     private final int pokemonCount;
 
     private transient final Map<String, UUID> playerTokens = new HashMap<>(2);
+    private transient final Map<UUID, String> playerSessions = new HashMap<>(2);
 
     private transient final GameLifecycle lifecycle = new GameLifecycle(this);
 
@@ -42,6 +48,7 @@ public class GamePlay extends Game {
 
         return super.addPlayer(user);
     }
+
 
     public Game addPlayer(User user, int selectedPokemon) {
         final String token = this.generateToken();
@@ -75,6 +82,20 @@ public class GamePlay extends Game {
     public void start() {
         this.status = GameStatus.PLAYING;
 
+        try {
+            PacketFactory.broadcastPacket(this.getId(), new GameStartPacket());
+        } catch (Exception e) {
+            logger.error("Failed to broadcast GameStartPacket for game {}", this.getId(), e);
+        }
+
         this.lifecycle.startGame();
+    }
+
+    public void applySessionId(UUID user, String sessionId) {
+        this.playerSessions.put(user, sessionId);
+    }
+
+    public Map<UUID, String> getPlayerSessions() {
+        return playerSessions;
     }
 }

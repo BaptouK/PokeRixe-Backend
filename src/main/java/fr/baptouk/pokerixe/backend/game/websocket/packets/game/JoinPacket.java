@@ -10,7 +10,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.util.UUID;
 
-public record JoinPacket(UUID userId) implements PacketData {
+public record JoinPacket(UUID userId, String username) implements PacketData {
 
     private static final Logger logger = LoggerFactory.getLogger(JoinPacket.class);
 

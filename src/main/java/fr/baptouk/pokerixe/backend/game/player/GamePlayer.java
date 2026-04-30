@@ -18,4 +18,6 @@ public final class GamePlayer {
 
     private Integer indexSelectedPokemon;
 
+    private transient String sessionId;
+
 }

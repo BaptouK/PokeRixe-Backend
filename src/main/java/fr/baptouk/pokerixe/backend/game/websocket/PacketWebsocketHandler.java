@@ -26,7 +26,7 @@ public final class PacketWebsocketHandler extends BinaryWebSocketHandler {
         try {
             final byte[] payload = message.getPayload().array();
 
-            final PacketSerializer.UnserializedPacket unserializedPacket = PacketFactory.serializer().deserialize(payload);
+            final PacketSerializer.UnserializedPacket unserializedPacket = PacketFactory.serializer().deserialize(session.getId(), payload);
 
             unserializedPacket.data()
                     .handleRecieve(session,
