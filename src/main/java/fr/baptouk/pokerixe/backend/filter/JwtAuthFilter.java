@@ -37,6 +37,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String jwt = extractJwtFromCookie(request);
 
         if (jwt == null) {
+            logger.warn("No jwt cookie on {} {}", request.getMethod(), request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
@@ -54,10 +55,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                             );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    logger.warn("JWT token invalid or expired for {}", mail);
                 }
             }
         } catch (Exception e) {
-            logger.error("Failed to extract mail from JWT",e);
+            logger.error("Failed to validate JWT on {} {}", request.getMethod(), request.getRequestURI(), e);
         }
 
         filterChain.doFilter(request, response);

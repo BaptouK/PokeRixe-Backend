@@ -4,8 +4,11 @@ import fr.baptouk.pokerixe.backend.game.play.GameCreationResponse;
 import fr.baptouk.pokerixe.backend.game.provider.exceptions.GameNotFoundException;
 import fr.baptouk.pokerixe.backend.game.provider.GameService;
 import fr.baptouk.pokerixe.backend.game.provider.exceptions.UserAlreadyInGameException;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.game.JoinPacket;
 import fr.baptouk.pokerixe.backend.user.User;
 import fr.baptouk.pokerixe.backend.user.provider.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +23,8 @@ public final class GameController {
 
     @Autowired
     private GameService gameService;
+
+    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
     @Autowired
     private UserService userService;
@@ -50,6 +55,7 @@ public final class GameController {
         try {
             return ResponseEntity.ok(gameService.createGame(user, description));
         } catch (UserAlreadyInGameException e) {
+            logger.warn("User Already In Game Exception");
             return ResponseEntity.badRequest().build();
         }
     }

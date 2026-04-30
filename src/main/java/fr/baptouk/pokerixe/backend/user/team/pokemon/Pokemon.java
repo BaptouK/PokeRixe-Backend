@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public final class Pokemon {
 
-    private int id;
+    private Integer id;
     private String apiUrl;
 
     private List<Attack> attacks;

@@ -14,7 +14,7 @@ public class SessionConfig {
         return servletContext -> {
             SessionCookieConfig cookieConfig = servletContext.getSessionCookieConfig();
             cookieConfig.setHttpOnly(true);
-            cookieConfig.setSecure(true);
+            // cookieConfig.setSecure(true); oblige le nav a etre en https pour envoyé des requetes
         };
     }
 }

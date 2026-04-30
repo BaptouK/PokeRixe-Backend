@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 public final class Attack {
 
-    private int id;
+    private Integer id;
     private String apiUrl;
 
 }
