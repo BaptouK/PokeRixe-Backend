@@ -1,7 +1,6 @@
 package fr.baptouk.pokerixe.backend.game.player;
 
-import fr.baptouk.pokerixe.backend.user.team.Team;
-import fr.baptouk.pokerixe.backend.user.team.pokemon.Pokemon;
+import fr.baptouk.pokerixe.backend.game.team.GameTeam;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,8 +14,8 @@ public final class GamePlayer {
 
     private String pseudo;
 
-    private Team team;
+    private GameTeam team;
 
-    private Pokemon selectedPokemon;
+    private Integer indexSelectedPokemon;
 
 }
