@@ -9,7 +9,6 @@ public final class GameLifecycle {
     private final GamePlay gamePlay;
 
 
-
     public void fetchPokemons() {
 
     }

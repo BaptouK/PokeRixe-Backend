@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import fr.baptouk.pokerixe.backend.game.Game;
 import fr.baptouk.pokerixe.backend.game.play.lifecycle.GameLifecycle;
 import fr.baptouk.pokerixe.backend.user.User;
-import fr.baptouk.pokerixe.backend.user.team.pokemon.Pokemon;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -44,8 +43,7 @@ public class GamePlay extends Game {
         return super.addPlayer(user);
     }
 
-    @Override
-    public Game addPlayer(User user, Pokemon selectedPokemon) {
+    public Game addPlayer(User user, int selectedPokemon) {
         final String token = this.generateToken();
         this.playerTokens.put(token, user.getId());
 

@@ -4,7 +4,6 @@ import fr.baptouk.pokerixe.backend.game.analysis.GameAnalysis;
 import fr.baptouk.pokerixe.backend.game.player.GamePlayer;
 import fr.baptouk.pokerixe.backend.game.turn.Turn;
 import fr.baptouk.pokerixe.backend.user.User;
-import fr.baptouk.pokerixe.backend.user.team.pokemon.Pokemon;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -34,20 +33,15 @@ public class Game {
     }
 
     public Game addPlayer(final User user) {
-        return this.addPlayer(user, user.getTeam()
-                        .getPokemons()
-                        .stream()
-                        .findFirst()
-                        .orElse(null));
+        return this.addPlayer(user, 0);
     }
 
 
-    public Game addPlayer(final User user, Pokemon selectedPokemon) {
+    public Game addPlayer(final User user, Integer selectedPokemon) {
         this.players.add(GamePlayer.builder()
                 .id(user.getId())
                 .pseudo(user.getPseudo())
-                .team(user.getTeam())
-                .selectedPokemon(selectedPokemon)
+                .indexSelectedPokemon(selectedPokemon)
                 .build());
 
         return this;

@@ -71,7 +71,7 @@ public final class GameService {
                 .findFirst()
                 .orElseThrow(GameNotFoundException::new);
 
-        gamePlay.addPlayer(user, user.getTeam().getPokemons().get(selectSlotPokemon));
+        gamePlay.addPlayer(user, selectSlotPokemon);
 
 
         /*
