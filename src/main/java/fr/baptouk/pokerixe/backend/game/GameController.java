@@ -49,6 +49,7 @@ public final class GameController {
         try {
             return ResponseEntity.ok(gameService.createGame(user, description));
         } catch (UserAlreadyInGameException e) {
+            System.out.println(">>> UserAlreadyInGameException !");
             return ResponseEntity.badRequest().build();
         }
     }
