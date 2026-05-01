@@ -87,6 +87,10 @@ public final class GameService {
                 .toList();
     }
 
+    public List<GamePlay> getGamePlays(){
+        return this.games;
+    }
+
     public Optional<GamePlay> getGameByToken(final String token){
         return this.games.stream()
                 .filter(gamePlay -> gamePlay.getUserByToken(token) != null)

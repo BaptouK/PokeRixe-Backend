@@ -5,6 +5,7 @@ import fr.baptouk.pokerixe.backend.game.play.GamePlay;
 import fr.baptouk.pokerixe.backend.game.provider.GameService;
 import fr.baptouk.pokerixe.backend.game.websocket.UserNotAuthorizedException;
 import fr.baptouk.pokerixe.backend.game.websocket.packets.game.JoinPacket;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.game.lifecycle.GameStartPacket;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ public final class PacketSerializer {
 
     static {
         register(JoinPacket.class);
+        register(GameStartPacket.class);
     }
 
     private static void register(Class<? extends SendablePacket> clazz) {
@@ -52,7 +54,7 @@ public final class PacketSerializer {
         return new BinaryMessage(serialize(data));
     }
 
-    public UnserializedPacket deserialize(final byte[] bytes) throws IOException, UserNotAuthorizedException {
+    public UnserializedPacket deserialize(final String sessionId, final byte[] bytes) throws IOException, UserNotAuthorizedException {
         final Packet<?> packet = mapper.readValue(bytes, Packet.class);
 
         final String token = packet.token();
@@ -70,6 +72,7 @@ public final class PacketSerializer {
 
         final GamePlay game = optionalGame.get();
         final UUID user = game.getUserByToken(token);
+        game.applySessionId(user, sessionId);
 
         return new UnserializedPacket(optionalGame.get(), user, mapper.convertValue(packet.data(), clazz));
     }

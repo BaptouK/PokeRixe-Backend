@@ -4,6 +4,7 @@ import fr.baptouk.pokerixe.backend.game.analysis.GameAnalysis;
 import fr.baptouk.pokerixe.backend.game.player.GamePlayer;
 import fr.baptouk.pokerixe.backend.game.turn.Turn;
 import fr.baptouk.pokerixe.backend.user.User;
+import fr.baptouk.pokerixe.backend.user.team.pokemon.Pokemon;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -37,7 +38,7 @@ public class Game {
     }
 
 
-    public Game addPlayer(final User user, Integer selectedPokemon) {
+    public Game addPlayer(final User user, int selectedPokemon) {
         this.players.add(GamePlayer.builder()
                 .id(user.getId())
                 .pseudo(user.getPseudo())
