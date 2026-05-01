@@ -41,7 +41,7 @@ public class PacketFactory {
         }
     }
 
-    public static void broadcastPacket(final UUID gameId, final PacketData packet) throws Exception {
+    public static void broadcastPacket(final UUID gameId, final SendablePacket packet) throws Exception {
         for (final WebSocketSession session : SESSIONS) {
             if (gameService.getAvailableGames().stream()
                     .filter(game -> game.getId().equals(gameId))

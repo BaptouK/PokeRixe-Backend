@@ -2,7 +2,7 @@ package fr.baptouk.pokerixe.backend.game.play.lifecycle;
 
 import fr.baptouk.pokerixe.backend.game.play.GamePlay;
 import fr.baptouk.pokerixe.backend.game.turn.action.Action;
-import fr.baptouk.pokerixe.backend.game.websocket.packets.game.GameStartPacket;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.game.lifecycle.GameStartPacket;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

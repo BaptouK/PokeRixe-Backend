@@ -3,7 +3,6 @@ package fr.baptouk.pokerixe.backend.game.play;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import fr.baptouk.pokerixe.backend.game.Game;
 import fr.baptouk.pokerixe.backend.game.play.lifecycle.GameLifecycle;
-import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketFactory;
 import fr.baptouk.pokerixe.backend.game.websocket.packets.game.lifecycle.GameStartPacket;
 import fr.baptouk.pokerixe.backend.user.User;
 import lombok.Getter;
@@ -84,11 +83,8 @@ public class GamePlay extends Game {
     public void start() {
         this.status = GameStatus.PLAYING;
 
-        try {
-            PacketFactory.broadcastPacket(this.getId(), new GameStartPacket());
-        } catch (Exception e) {
-            logger.error("Failed to broadcast GameStartPacket for game {}", this.getId(), e);
-        }
+        new GameStartPacket().send();
+
 
         this.lifecycle.startGame();
     }

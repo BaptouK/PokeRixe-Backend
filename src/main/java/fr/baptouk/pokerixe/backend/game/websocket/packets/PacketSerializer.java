@@ -30,7 +30,6 @@ public final class PacketSerializer {
 
     static {
         register(JoinPacket.class);
-        register(GameStartPacket.class);
     }
 
     private static void register(Class<? extends SendablePacket> clazz) {
