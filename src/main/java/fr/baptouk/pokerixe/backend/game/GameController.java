@@ -49,11 +49,11 @@ public final class GameController {
     }
 
     @PostMapping
-    public @ResponseBody ResponseEntity<GameCreationResponse> createGame(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String description) {
+    public @ResponseBody ResponseEntity<GameCreationResponse> createGame(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String description, @RequestParam Integer pokemonTeamSlot) {
         final User user = this.userService.getUserByToken(userDetails);
 
         try {
-            return ResponseEntity.ok(gameService.createGame(user, description));
+            return ResponseEntity.ok(gameService.createGame(user, description, pokemonTeamSlot));
         } catch (UserAlreadyInGameException e) {
             logger.warn("User Already In Game Exception");
             return ResponseEntity.badRequest().build();

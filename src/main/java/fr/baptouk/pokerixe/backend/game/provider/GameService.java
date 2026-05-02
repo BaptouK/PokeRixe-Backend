@@ -46,7 +46,7 @@ public final class GameService {
      * @param user {@link User} qui crée la partie
      * @return Un token websocket qui appartient à la partie
      */
-    public GameCreationResponse createGame(final User user, final String description) throws UserAlreadyInGameException {
+    public GameCreationResponse createGame(final User user, final String description, final Integer pokemonTeamSlot) throws UserAlreadyInGameException {
         if (this.games.stream()
                 .anyMatch(gamePlay -> gamePlay.getPlayers().stream()
                         .anyMatch(player -> player.getId().equals(user.getId())))) {
@@ -59,7 +59,7 @@ public final class GameService {
         game.setGameService(this);
         game.setPokeApiClient(pokeApiClient);
 
-        game.addPlayer(user);
+        game.addPlayer(user, pokemonTeamSlot);
 
         this.games.add(game);
         return new GameCreationResponse(game.getId(), game.getUserToken(user.getId()));
