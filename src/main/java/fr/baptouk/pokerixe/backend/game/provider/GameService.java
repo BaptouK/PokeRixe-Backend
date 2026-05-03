@@ -59,7 +59,7 @@ public final class GameService {
 
         final int pokemonCount = user.getTeam().getPokemons().size();
 
-        final GamePlay game = new GamePlay(description, pokemonCount);
+        final GamePlay game = new GamePlay(description);
         game.setGameService(this);
         game.setPokeApiClient(pokeApiClient);
 
@@ -72,7 +72,6 @@ public final class GameService {
     public String joinGame(final User user, final UUID gameId, final int selectSlotPokemon) throws GameNotFoundException {
         final GamePlay gamePlay = this.games.stream()
 
-                // Is game available ?
                 .filter(games -> games.getId().equals(gameId))
                 .filter(games -> games.getStatus() == GameStatus.WAITING)
                 .filter(games -> games.getPlayers().size() < 2)
@@ -106,7 +105,7 @@ public final class GameService {
                 .findFirst();
     }
 
-    public Iterable<Game> getHistory(UUID userId) {
+    public List<Game> getHistory(UUID userId) {
         return this.gameRepository.findAll()
                 .stream()
                 .filter(game -> game.getPlayers().stream()
@@ -116,5 +115,9 @@ public final class GameService {
 
     public void saveGame(Game game){
         gameRepository.save(game);
+    }
+
+    public void removeGame(UUID gameId) {
+        this.games.removeIf(g -> g.getId().equals(gameId));
     }
 }

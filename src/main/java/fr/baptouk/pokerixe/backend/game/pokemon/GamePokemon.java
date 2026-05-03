@@ -15,6 +15,7 @@ public class GamePokemon {
     private Integer pokemonId;
     private String name;
     private PokemonStats stats;
+    private Integer hp;
     private List<PokemonType> type = Collections.emptyList();
     private List<GameAttack> attacks = Collections.emptyList();
     private List<PokemonType> superEffectivesTypes  = Collections.emptyList();
@@ -55,6 +56,7 @@ public class GamePokemon {
         int specialAttack = extractStat(slots, "special-attack");
         int specialDefense = extractStat(slots, "special-defense");
         int speed = extractStat(slots, "speed");
+        this.hp = hp;
         return new PokemonStats(hp, attack,defense,specialAttack,specialDefense,speed);
     }
 

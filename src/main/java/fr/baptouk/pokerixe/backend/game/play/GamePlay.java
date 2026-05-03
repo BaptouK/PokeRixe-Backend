@@ -21,7 +21,9 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.security.SecureRandom;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -37,18 +39,16 @@ public class GamePlay extends Game {
     @Getter
     private GameStatus status = GameStatus.WAITING;
 
-    private final int pokemonCount;
-
     @Transient private transient final Map<String, UUID> playerTokens = new HashMap<>(2);
     @Transient @Getter private transient final Map<UUID, String> playerSessions = new HashMap<>(2);
+    @Transient @Getter private transient final Set<UUID> playersWhoActed = new HashSet<>(2);
 
     @Transient public transient final GameLifecycle lifecycle = new GameLifecycle(this);
     @Transient @Setter private transient GameService gameService;
     @Transient @Setter private transient WebClient pokeApiClient;
 
-    public GamePlay(final String description, final int pokemonCount) {
+    public GamePlay(final String description) {
         super(description);
-        this.pokemonCount = pokemonCount;
     }
 
     @Override
@@ -86,14 +86,14 @@ public class GamePlay extends Game {
     public void start() {
         this.status = GameStatus.PLAYING;
 
-
         new GameStartPacket().send();
 
-        sendFullState();
+        sendFullState("waiting_actions", "");
 
     }
 
-    public void sendFullState() {
+    public void sendFullState(String fightPhase, String winner) {
+
         GamePlayer p1 = null;
         GamePlayer p2 = null;
         String p1SessionId = null;
@@ -123,22 +123,19 @@ public class GamePlay extends Game {
         }
 
         new FullStatePacket(
-                FullStateGameDto.from(
-                        this,
-                        CurrentPlayerStateDto.from(p1),
-                        OpponentPlayerStateDto.from(p2)
-                        )
-                ).send(p1Session);
+                FullStateGameDto.from(this, p1, p2, CurrentPlayerStateDto.from(p1), OpponentPlayerStateDto.from(p2), fightPhase, winner)
+        ).send(p1Session);
 
         new FullStatePacket(
-                FullStateGameDto.from(
-                        this,
-                        CurrentPlayerStateDto.from(p2),
-                        OpponentPlayerStateDto.from(p1)
-                )
+                FullStateGameDto.from(this, p2, p1, CurrentPlayerStateDto.from(p2), OpponentPlayerStateDto.from(p1), fightPhase, winner)
         ).send(p2Session);
+    }
 
-
+    public void finishGame() {
+        if (gameService != null) {
+            gameService.saveGame(this);
+            gameService.removeGame(this.getId());
+        }
     }
 
     public void applySessionId(UUID user, String sessionId) {

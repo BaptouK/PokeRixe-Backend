@@ -1,9 +1,7 @@
 package fr.baptouk.pokerixe.backend.game.websocket;
 
-import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketData;
 import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketFactory;
 import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketSerializer;
-import fr.baptouk.pokerixe.backend.game.websocket.packets.ReceivablePacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.BinaryMessage;
@@ -27,17 +25,11 @@ public final class PacketWebsocketHandler extends BinaryWebSocketHandler {
 
             final PacketSerializer.UnserializedPacket unserializedPacket = PacketFactory.serializer().deserialize(session.getId(), payload);
 
-            final PacketData packet = unserializedPacket.data();
-
-            if (packet instanceof ReceivablePacket receivable) {
-                receivable.handleRecieve(
-                        session,
-                        unserializedPacket.user(),
-                        unserializedPacket.game()
-                );
-            } else {
-                logger.warn("Paquet reçu d'un client mais non receivable : {}", packet.getClass().getSimpleName());
-            }
+            unserializedPacket.data().handleRecieve(
+                    session,
+                    unserializedPacket.user(),
+                    unserializedPacket.game()
+            );
 
         } catch (UserNotAuthorizedException e) {
             logger.warn("Unauthorized user attempted to send a packet", e);

@@ -1,4 +1,4 @@
-package fr.baptouk.pokerixe.backend.game.websocket.packets.game;
+package fr.baptouk.pokerixe.backend.game.websocket.packets.game.lifecycle;
 
 import fr.baptouk.pokerixe.backend.game.play.GamePlay;
 import fr.baptouk.pokerixe.backend.game.play.GameStatus;
@@ -31,7 +31,6 @@ public record JoinPacket(UUID userId) implements ReceivablePacket, SendablePacke
         }
     }
 
-    @Override
     public void send() {
         try {
             PacketFactory.broadcastPacket(this);

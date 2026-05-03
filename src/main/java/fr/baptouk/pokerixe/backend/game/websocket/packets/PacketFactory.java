@@ -52,6 +52,12 @@ public class PacketFactory {
         }
     }
 
+    public static WebSocketSession getSession(final String sessionId) {
+        return SESSIONS.stream()
+                .filter(session -> session.getId().equals(sessionId))
+                .findFirst()
+                .orElse(null);
+    }
 
     public static Set<WebSocketSession> sessions() {
         return SESSIONS;

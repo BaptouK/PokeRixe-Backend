@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.baptouk.pokerixe.backend.game.play.GamePlay;
 import fr.baptouk.pokerixe.backend.game.provider.GameService;
 import fr.baptouk.pokerixe.backend.game.websocket.UserNotAuthorizedException;
-import fr.baptouk.pokerixe.backend.game.websocket.packets.game.JoinPacket;
-import fr.baptouk.pokerixe.backend.game.websocket.packets.game.lifecycle.GameStartPacket;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.game.AttackPacket;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.game.SwitchPacket;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.game.lifecycle.JoinPacket;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,13 +27,15 @@ public final class PacketSerializer {
     private final ObjectMapper mapper =
             new ObjectMapper(new MessagePackFactory());
 
-    private static final Map<String, Class<? extends SendablePacket>> REGISTRY = new HashMap<>();
+    private static final Map<String, Class<? extends ReceivablePacket>> REGISTRY = new HashMap<>();
 
     static {
         register(JoinPacket.class);
+        register(SwitchPacket.class);
+        register(AttackPacket.class);
     }
 
-    private static void register(Class<? extends SendablePacket> clazz) {
+    private static void register(Class<? extends ReceivablePacket> clazz) {
         REGISTRY.put(clazz.getSimpleName(), clazz);
     }
 
@@ -63,7 +66,7 @@ public final class PacketSerializer {
             throw new UserNotAuthorizedException();
         }
 
-        final Class<? extends SendablePacket> clazz = REGISTRY.get(packet.type());
+        final Class<? extends ReceivablePacket> clazz = REGISTRY.get(packet.type());
 
         if (clazz == null) {
             throw new RuntimeException("Unknown packet type: " + packet.type());
@@ -79,6 +82,6 @@ public final class PacketSerializer {
     public record UnserializedPacket(
             GamePlay game,
             UUID user,
-            SendablePacket data
+            ReceivablePacket data
     ) {}
 }

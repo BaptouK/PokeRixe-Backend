@@ -21,6 +21,9 @@ public final class GamePlayer {
 
     private Integer indexSelectedPokemon;
 
+    @Builder.Default
+    private PlayerStatus status = PlayerStatus.WAITING_ACTION;
+
     private transient String sessionId;
 
     public Mono<Void> init(WebClient pokeApiClient) {
