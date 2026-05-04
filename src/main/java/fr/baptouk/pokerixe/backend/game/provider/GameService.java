@@ -131,15 +131,15 @@ public final class GameService {
     }
 
     public void startGameAnalysis(Game game) {
-        try {
-            this.gameAnalysisProvider.startAnalysis(game)
-                    .thenAccept(analysis -> {
-                        game.setAnalysis(analysis);
-                        this.gameRepository.save(game);
-                    })
-                    .thenAccept(v -> logger.info("Analyse de la partie {} terminée", game.getId()));
-        } catch (IOException e) {
-            logger.error("Erreur lors du lancement de l'analyse de la partie {}", game.getId(), e);
-        }
+        this.gameAnalysisProvider.startAnalysis(game)
+                .thenAccept(analysis -> {
+                    game.setAnalysis(analysis);
+                    this.gameRepository.save(game);
+                })
+                .thenAccept(v -> logger.info("Analyse de la partie {} terminée", game.getId()))
+                .exceptionally(ex -> {
+                    logger.error("Erreur lors de l'analyse de la partie {}", game.getId(), ex);
+                    return null;
+                });
     }
 }

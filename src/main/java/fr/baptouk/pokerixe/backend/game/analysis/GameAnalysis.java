@@ -1,13 +1,19 @@
 package fr.baptouk.pokerixe.backend.game.analysis;
 
-import java.util.Map;
-import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public final class GameAnalysis {
 
     private int score;
 
-    private Map<Integer,Integer> scoreByTurn;
+    private Map<String, Integer> scoreByTurn;
 
     private String advice;
 }
