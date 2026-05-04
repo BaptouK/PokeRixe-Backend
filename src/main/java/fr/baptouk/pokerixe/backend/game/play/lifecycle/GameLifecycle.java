@@ -1,10 +1,12 @@
 package fr.baptouk.pokerixe.backend.game.play.lifecycle;
 
+import fr.baptouk.pokerixe.backend.game.attack.GameAttack;
 import fr.baptouk.pokerixe.backend.game.play.GamePlay;
 import fr.baptouk.pokerixe.backend.game.play.GameStatus;
 import fr.baptouk.pokerixe.backend.game.player.GamePlayer;
 import fr.baptouk.pokerixe.backend.game.player.PlayerStatus;
 import fr.baptouk.pokerixe.backend.game.pokemon.GamePokemon;
+import fr.baptouk.pokerixe.backend.game.pokemon.PokemonTypeEffectiveness;
 import fr.baptouk.pokerixe.backend.game.turn.Turn;
 import fr.baptouk.pokerixe.backend.game.turn.action.Action;
 import fr.baptouk.pokerixe.backend.game.turn.action.Attack;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
 
 @RequiredArgsConstructor
 public final class GameLifecycle {
@@ -109,15 +112,30 @@ public final class GameLifecycle {
     }
 
     public void damageCalcul(GamePokemon poke1, GamePokemon poke2, Attack attack) {
-        // TODO : Ajouter le coef de type, les STAB, les super efficaces, pas très efficaces, etc...
+
         double niveau = (50 * 0.4) + 2;
+
+        double coeff = calculateTypeCoefficient(poke1, poke2, attack);
+
+        logger.info("Coeff d'attaque : {}",coeff);
+
+        double stab = 1;
+        if (poke1.getType().contains(poke1.getAttacks().get(attack.getIndexAttack()).getType())) {
+            stab *= 1.5;
+        }
+
         int damage = (int) ((((poke1.getAttacks().get(attack.getIndexAttack()).getPower()
-                * ((double) poke1.getStats().getAttack() / poke2.getStats().getDefense()) * niveau) / 50) + 2) * 1);
+                * ((double) poke1.getStats().getAttack() / poke2.getStats().getDefense()) * niveau) / 50) + 2) * coeff * stab);
 
         poke2.setHp(poke2.getHp() - damage);
         if (poke2.getHp() <= 0) {
             poke2.setHp(0);
         }
+    }
+
+    private double calculateTypeCoefficient(GamePokemon attacker, GamePokemon defender, Attack attack) {
+        GameAttack gameAttack = attacker.getAttacks().get(attack.getIndexAttack());
+        return PokemonTypeEffectiveness.calculateTypeCoefficient(gameAttack.getType(), defender.getType());
     }
 
     private void resolveSwitchActions(List<GamePlayer> players, Map<UUID, Action> actions) {
@@ -177,7 +195,7 @@ public final class GameLifecycle {
         playerActions.remove(playerId);
 
         if (!gamePlay.getTurns().isEmpty()) {
-            Turn lastTurn = gamePlay.getTurns().get(gamePlay.getTurns().size() - 1);
+            Turn lastTurn = gamePlay.getTurns().getLast();
             findPlayerById(gamePlay.getPlayers(), playerId).ifPresent(p -> {
                 GamePokemon newPoke = getActivePokemon(p);
                 if (newPoke != null) {
@@ -240,7 +258,7 @@ public final class GameLifecycle {
             logger.info("Partie terminée, gagnant : {}", winnerPseudo);
 
             if (!gamePlay.getTurns().isEmpty()) {
-                gamePlay.getTurns().get(gamePlay.getTurns().size() - 1)
+                gamePlay.getTurns().getLast()
                         .add(new LogEntry("fight_end", winnerPseudo + " remporte le combat !"));
             }
 
