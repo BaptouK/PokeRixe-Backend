@@ -1,5 +1,5 @@
 package fr.baptouk.pokerixe.backend.game.attack;
 
-public enum PowerClass {
-    PHYSIC, SPECIAL
+public enum DamageClass {
+    PHYSICAL, SPECIAL
 }

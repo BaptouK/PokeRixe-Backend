@@ -11,5 +11,4 @@ public final class Attack {
 
     private Integer id;
     private String apiUrl;
-
 }

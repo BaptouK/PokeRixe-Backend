@@ -1,12 +1,9 @@
 package fr.baptouk.pokerixe.backend.game.websocket;
 
-import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketData;
 import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketFactory;
 import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
@@ -26,12 +23,13 @@ public final class PacketWebsocketHandler extends BinaryWebSocketHandler {
         try {
             final byte[] payload = message.getPayload().array();
 
-            final PacketSerializer.UnserializedPacket unserializedPacket = PacketFactory.serializer().deserialize(payload);
+            final PacketSerializer.UnserializedPacket unserializedPacket = PacketFactory.serializer().deserialize(session.getId(), payload);
 
-            unserializedPacket.data()
-                    .handleRecieve(session,
-                            unserializedPacket.user(),
-                            unserializedPacket.game());
+            unserializedPacket.data().handleRecieve(
+                    session,
+                    unserializedPacket.user(),
+                    unserializedPacket.game()
+            );
 
         } catch (UserNotAuthorizedException e) {
             logger.warn("Unauthorized user attempted to send a packet", e);
