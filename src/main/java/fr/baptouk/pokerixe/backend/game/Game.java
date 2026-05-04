@@ -27,6 +27,8 @@ public class Game {
 
     private GameAnalysis analysis;
 
+    private int pokemonCount;
+
     private LocalDateTime date;
 
     private UUID winnerId;

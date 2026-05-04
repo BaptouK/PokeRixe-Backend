@@ -64,6 +64,7 @@ public final class HistoryController {
                 opponent.getPseudo(),
                 result,
                 game.getTurns().size(),
+                game.getAnalysis(),
                 playerTeam,
                 opponentTeam,
                 game.getTurns()

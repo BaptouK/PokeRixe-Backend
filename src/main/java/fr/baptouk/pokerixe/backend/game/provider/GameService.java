@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,9 +65,9 @@ public final class GameService {
             throw new UserAlreadyInGameException();
         }
 
-        final int pokemonCount = user.getTeam().getPokemons().size();
 
         final GamePlay game = new GamePlay(description);
+        game.setPokemonCount(user.getTeam().getPokemons().size());
         game.setGameService(this);
         game.setPokeApiClient(pokeApiClient);
 
@@ -102,10 +101,6 @@ public final class GameService {
                 .filter(gamePlay -> gamePlay.getStatus() == GameStatus.WAITING
                         && gamePlay.getPlayers().size() < 2)
                 .toList();
-    }
-
-    public List<GamePlay> getGamePlays() {
-        return this.games;
     }
 
     public Optional<GamePlay> getGameByToken(final String token) {
