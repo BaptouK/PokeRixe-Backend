@@ -58,14 +58,6 @@ public class GamePlay extends Game {
         return super.addPlayer(player);
     }
 
-    @Override
-    public Game addPlayer(User user, Pokemon selectedPokemon) {
-        final String token = this.generateToken();
-        this.playerTokens.put(token, user.getId());
-
-        return super.addPlayer(user, selectedPokemon);
-    }
-
     private synchronized String generateToken() {
         final long longToken = Math.abs(RANDOM.nextLong());
         return Long.toString(longToken, 16);
