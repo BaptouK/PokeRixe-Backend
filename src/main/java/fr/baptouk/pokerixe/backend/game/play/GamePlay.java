@@ -86,7 +86,7 @@ public class GamePlay extends Game {
     public void start() {
         this.status = GameStatus.PLAYING;
 
-        new GameStartPacket().send();
+        new GameStartPacket().send(this.getId());
 
         sendFullState("waiting_actions", "");
 
