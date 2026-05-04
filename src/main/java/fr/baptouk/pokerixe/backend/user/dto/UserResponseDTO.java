@@ -14,9 +14,9 @@ public class UserResponseDTO {
 
     public UserResponseDTO(User user) {
         this.id = user.getId().toString();
-        this.pseudo = user.getPseudo();
         this.mail = user.getMail();
         this.role = user.getRoles().contains("ROLE_ADMIN") ? 0 : 1;
+        this.pseudo = user.getPseudo();
         this.team = user.getTeam();
     }
 }

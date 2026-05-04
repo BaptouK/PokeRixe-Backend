@@ -1,6 +1,5 @@
 package fr.baptouk.pokerixe.backend.game.websocket;
 
-import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketData;
 import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketFactory;
 import fr.baptouk.pokerixe.backend.game.websocket.packets.PacketSerializer;
 import org.slf4j.Logger;
@@ -26,12 +25,13 @@ public final class PacketWebsocketHandler extends BinaryWebSocketHandler {
         try {
             final byte[] payload = message.getPayload().array();
 
-            final PacketSerializer.UnserializedPacket unserializedPacket = PacketFactory.serializer().deserialize(payload);
+            final PacketSerializer.UnserializedPacket unserializedPacket = PacketFactory.serializer().deserialize(session.getId(), payload);
 
-            unserializedPacket.data()
-                    .handleRecieve(session,
-                            unserializedPacket.user(),
-                            unserializedPacket.game());
+            unserializedPacket.data().handleRecieve(
+                    session,
+                    unserializedPacket.user(),
+                    unserializedPacket.game()
+            );
 
         } catch (UserNotAuthorizedException e) {
             logger.warn("Unauthorized user attempted to send a packet", e);

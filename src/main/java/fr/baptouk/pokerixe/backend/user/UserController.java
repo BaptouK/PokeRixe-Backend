@@ -19,24 +19,11 @@ public final class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public @ResponseBody ResponseEntity<Iterable<User>> getUsers() {
-        return ResponseEntity.ok(userService.getUsers());
-    }
 
     @GetMapping("/me")
     public ResponseEntity<UserResponseDTO> getMe(@AuthenticationPrincipal UserDetails userDetails) {
         try {
             return ResponseEntity.ok(new UserResponseDTO(userService.getByMail(userDetails.getUsername())));
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping("{uuid}")
-    public @ResponseBody ResponseEntity<UserResponseDTO> getUser(@PathVariable final UUID uuid) {
-        try {
-            return ResponseEntity.ok(new UserResponseDTO(userService.getUser(uuid)));
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

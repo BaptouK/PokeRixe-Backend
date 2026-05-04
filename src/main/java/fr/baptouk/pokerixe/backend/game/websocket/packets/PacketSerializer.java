@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.baptouk.pokerixe.backend.game.play.GamePlay;
 import fr.baptouk.pokerixe.backend.game.provider.GameService;
 import fr.baptouk.pokerixe.backend.game.websocket.UserNotAuthorizedException;
-import fr.baptouk.pokerixe.backend.game.websocket.packets.game.JoinPacket;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.game.AttackPacket;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.game.SwitchPacket;
+import fr.baptouk.pokerixe.backend.game.websocket.packets.game.lifecycle.JoinPacket;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,18 +27,20 @@ public final class PacketSerializer {
     private final ObjectMapper mapper =
             new ObjectMapper(new MessagePackFactory());
 
-    private static final Map<String, Class<? extends PacketData>> REGISTRY = new HashMap<>();
+    private static final Map<String, Class<? extends ReceivablePacket>> REGISTRY = new HashMap<>();
 
     static {
         register(JoinPacket.class);
+        register(SwitchPacket.class);
+        register(AttackPacket.class);
     }
 
-    private static void register(Class<? extends PacketData> clazz) {
+    private static void register(Class<? extends ReceivablePacket> clazz) {
         REGISTRY.put(clazz.getSimpleName(), clazz);
     }
 
 
-    private <T extends PacketData> Packet<T> of(final T data) {
+    private <T extends SendablePacket> Packet<T> of(final T data) {
         return new Packet<>(
                 null,
                 data.getClass().getSimpleName(),
@@ -44,15 +48,15 @@ public final class PacketSerializer {
         );
     }
 
-    private byte[] serialize(final PacketData data) throws Exception {
+    private byte[] serialize(final SendablePacket data) throws Exception {
         return mapper.writeValueAsBytes(of(data));
     }
 
-    public BinaryMessage serializePacket(final PacketData data) throws Exception {
+    public BinaryMessage serializePacket(final SendablePacket data) throws Exception {
         return new BinaryMessage(serialize(data));
     }
 
-    public UnserializedPacket deserialize(final byte[] bytes) throws IOException, UserNotAuthorizedException {
+    public UnserializedPacket deserialize(final String sessionId, final byte[] bytes) throws IOException, UserNotAuthorizedException {
         final Packet<?> packet = mapper.readValue(bytes, Packet.class);
 
         final String token = packet.token();
@@ -62,7 +66,7 @@ public final class PacketSerializer {
             throw new UserNotAuthorizedException();
         }
 
-        final Class<? extends PacketData> clazz = REGISTRY.get(packet.type());
+        final Class<? extends ReceivablePacket> clazz = REGISTRY.get(packet.type());
 
         if (clazz == null) {
             throw new RuntimeException("Unknown packet type: " + packet.type());
@@ -70,6 +74,7 @@ public final class PacketSerializer {
 
         final GamePlay game = optionalGame.get();
         final UUID user = game.getUserByToken(token);
+        game.applySessionId(user, sessionId);
 
         return new UnserializedPacket(optionalGame.get(), user, mapper.convertValue(packet.data(), clazz));
     }
@@ -77,6 +82,6 @@ public final class PacketSerializer {
     public record UnserializedPacket(
             GamePlay game,
             UUID user,
-            PacketData data
+            ReceivablePacket data
     ) {}
 }

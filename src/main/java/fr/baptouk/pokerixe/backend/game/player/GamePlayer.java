@@ -1,10 +1,12 @@
 package fr.baptouk.pokerixe.backend.game.player;
 
-import fr.baptouk.pokerixe.backend.user.team.Team;
-import fr.baptouk.pokerixe.backend.user.team.pokemon.Pokemon;
+import fr.baptouk.pokerixe.backend.game.team.GameTeam;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -15,8 +17,21 @@ public final class GamePlayer {
 
     private String pseudo;
 
-    private Team team;
+    private GameTeam team ;
 
-    private Pokemon selectedPokemon;
+    private Integer indexSelectedPokemon;
+
+    @Builder.Default
+    private PlayerStatus status = PlayerStatus.WAITING_ACTION;
+
+    private transient String sessionId;
+
+    public Mono<Void> init(WebClient pokeApiClient) {
+        List<Mono<Void>> tasks = this.team.getPokemons().stream()
+                .map(pokemon -> pokemon.fetch(pokeApiClient))
+                .toList();
+
+        return Mono.when(tasks);
+    }
 
 }

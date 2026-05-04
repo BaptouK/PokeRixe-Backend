@@ -9,8 +9,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,11 +23,15 @@ public class Game {
 
     private String description;
 
-    private List<Turn> turns = Collections.emptyList();
+    private List<Turn> turns = new ArrayList<>();
 
     private List<GamePlayer> players = new ArrayList<>(2);
 
     private GameAnalysis analysis;
+
+    private LocalDateTime date;
+
+    private UUID winnerId;
 
     protected Game(final String description) {
         this.description = description;
@@ -50,7 +54,8 @@ public class Game {
                 .selectedPokemon(selectedPokemon)
                 .build());
 
+    public Game addPlayer(final GamePlayer player) {
+        this.players.add(player);
         return this;
     }
-
 }

@@ -1,16 +1,16 @@
 package fr.baptouk.pokerixe.backend.game.turn.action;
 
-import fr.baptouk.pokerixe.backend.user.team.pokemon.Pokemon;
+import fr.baptouk.pokerixe.backend.game.player.GamePlayer;
+import lombok.Getter;
 
 public final class Attack extends Action{
 
-    public Attack() {
-        super("Attaque");
+    public Attack(int indexAttackPokemon) {
+        super("attack","Il a attaqué");
+        this.indexAttack = indexAttackPokemon;
     }
 
-    private String apiUrl;
+    @Getter
+    private final int indexAttack;
 
-    private Pokemon attacker;
-
-    private Pokemon target;
 }

@@ -20,6 +20,7 @@ public final class User {
 
     private Team team;
 
+
     private List<String> roles = Collections.singletonList("ROLE_USER"); // Pour spring Security
 
     public User(String mail, String password, String pseudo) {
